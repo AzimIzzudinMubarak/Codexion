@@ -5,15 +5,7 @@ CFLAGS	= -Wall -Wextra -Werror -pthread
 IFLAGS	= -I include
 
 SRCDIR	= src
-SRCS	= $(SRCDIR)/main.c \
-		  $(SRCDIR)/parse.c \
-		  $(SRCDIR)/init.c \
-		  $(SRCDIR)/coder.c \
-		  $(SRCDIR)/dongle.c \
-		  $(SRCDIR)/scheduler.c \
-		  $(SRCDIR)/monitor.c \
-		  $(SRCDIR)/log.c \
-		  $(SRCDIR)/utils.c
+SRCS	= $(SRCDIR)/main.c
 
 OBJS	= $(SRCS:.c=.o)
 
