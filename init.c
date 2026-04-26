@@ -28,22 +28,35 @@ int init_dongles(t_sim *sim)
 	return (1);
 }
 
-int	init_coders(t_sim *sim)
+int init_coders(t_sim *sim)
 {
 	int i;
+	t_dongle *left;
+	t_dongle *right;
 
 	sim->coders = malloc(sizeof(t_coder) * sim->nb_coders);
-	if (!sim->dongles)
+	if (!sim->coders)
 		return (0);
 	i = 0;
+	while (i < sim->nb_coders)
 	{
+		left  = &sim->dongles[i];
+		right = &sim->dongles[(i + 1) % sim->nb_coders];
 		sim->coders[i].id = i + 1;
 		sim->coders[i].sim = sim;
 		sim->coders[i].compile_count = 0;
 		sim->coders[i].last_compile = sim->start_time;
 		sim->coders[i].burned_out = 0;
-		sim->coders[i].left = &sim->dongles[i];
-		sim->coders[i].right = &sim->dongles[(i + 1) % sim->nb_coders];
+		if (left->id < right->id)
+		{
+			sim->coders[i].first  = left;
+			sim->coders[i].second = right;
+		}
+		else
+		{
+			sim->coders[i].first  = right;
+			sim->coders[i].second = left;
+		}
 		i++;
 	}
 	return (1);
@@ -51,13 +64,15 @@ int	init_coders(t_sim *sim)
 
 int init_sim(t_sim *sim, int argc, char **argv)
 {
+	sim->coders = NULL;
+	sim->dongles = NULL;
+	sim->stop = 0;
 	if (!parse_args(sim, argc, argv))
 		return (0);
 	if (pthread_mutex_init(&sim->log_mutex, NULL) != 0)
 		return (0);
 	if (pthread_mutex_init(&sim->stop_mutex, NULL) != 0)
 		return (0);
-	sim->stop = 0;
 	sim->start_time = get_time_ms();
 	if (!init_dongles(sim))
 		return (0);

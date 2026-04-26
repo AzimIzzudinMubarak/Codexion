@@ -2,6 +2,7 @@
 # define CODEXION_H
 
 # include <unistd.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <pthread.h>
@@ -9,7 +10,7 @@
 
 /* --- Structures --- */
 
-typedef struct s_heap_dongle {
+typedef struct s_heap_node {
 	int					coder_id;
 	long				priority;
 } t_heap_node;
@@ -27,18 +28,20 @@ typedef struct s_dongle {
 	long				arrival_counter;
 } t_dongle;
 
+typedef struct s_sim t_sim;
+
 typedef struct s_coder {
 	int					id;
 	pthread_t			thread;
 	struct s_sim		*sim;
 	long				last_compile;
 	int					compile_count;
-	t_dongle			*left;
-	t_dongle			*right;
+	t_dongle			*first;
+	t_dongle			*second;
 	int					burned_out;
 } t_coder;
 
-typedef struct s_sim {
+struct s_sim {
 	t_coder				*coders;
 	t_dongle			*dongles;
 	pthread_t			monitor;
@@ -54,18 +57,28 @@ typedef struct s_sim {
 	long				dongle_cooldown;
 	int					scheduler;
 	long				start_time;
-} t_sim;
+};
 
 /* --- Functions --- */
 
-int init_dongles(t_sim *sim);
-int init_coders(t_sim *sim);
-int init_sim(t_sim *sim, int argc, char **argv);
+// utils
+long	get_time_ms(void);
+void	log_state(t_sim *sim, int id, char *state);
+int		should_stop(t_sim *sim);
 
-int parse_args(t_sim *sim, int argc, char **argv);
+// parser
+int		parse_args(t_sim *sim, int argc, char **argv);
 
-void cleanup_sim(t_sim *sim);
+// init
+int		init_sim(t_sim *sim, int argc, char **argv);
 
-long get_time_ms(void);
+// cleanup
+void	cleanup_sim(t_sim *sim);
+
+// coder thread
+void	*coder_routine(void *arg);
+
+// monitor thread
+void	*monitor_routine(void *arg);
 
 #endif
