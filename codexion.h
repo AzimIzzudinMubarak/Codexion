@@ -81,4 +81,8 @@ void	*coder_routine(void *arg);
 // monitor thread
 void	*monitor_routine(void *arg);
 
+// debug log
+void	print_debug_header(t_sim *sim);
+void	debug_log(t_sim *sim, int coder_id, char *event, char *status);
+
 #endif

@@ -34,6 +34,7 @@ int main(int argc, char **argv)
 		write(2, "Error: invalid arguments\n", 25);
 		return (1);
 	}
+	print_debug_header(&sim);
 	launch_coders(&sim);
 	pthread_create(&sim.monitor, NULL, monitor_routine, &sim);
 	join_coders(&sim);
