@@ -67,6 +67,7 @@ int init_sim(t_sim *sim, int argc, char **argv)
 	sim->coders = NULL;
 	sim->dongles = NULL;
 	sim->stop = 0;
+	sim->done = 0;
 	if (!parse_args(sim, argc, argv))
 		return (0);
 	if (pthread_mutex_init(&sim->log_mutex, NULL) != 0)

@@ -23,9 +23,11 @@ static int check_all_done(t_sim *sim)
 	i = 0;
 	while (i < sim->nb_coders)
 	{
+		pthread_mutex_lock(&sim->log_mutex);
 		if (sim->coders[i].compile_count
 				>= sim->nb_compiles_required)
 			done_count++;
+		pthread_mutex_unlock(&sim->log_mutex);
 		i++;
 	}
 	return (done_count == sim->nb_coders);
@@ -59,7 +61,7 @@ void *monitor_routine(void *arg)
 			if (now - last > sim->time_to_burnout)
 			{
 				pthread_mutex_lock(&sim->log_mutex);
-				printf("%ld %d has burned out\n",
+				printf("%ld %d burned out\n",
 					get_time_ms() - sim->start_time,
 					sim->coders[i].id);
 				pthread_mutex_unlock(&sim->log_mutex);
@@ -70,7 +72,10 @@ void *monitor_routine(void *arg)
 		}
 		if (check_all_done(sim))
 		{
-			set_stop(sim);
+			pthread_mutex_lock(&sim->stop_mutex);
+			sim->done = 1;
+			pthread_mutex_unlock(&sim->stop_mutex);
+			broadcast_all_dongles(sim);
 			return (NULL);
 		}
 		usleep(1000);

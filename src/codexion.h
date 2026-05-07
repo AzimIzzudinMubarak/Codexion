@@ -48,6 +48,7 @@ struct s_sim {
 	pthread_mutex_t		log_mutex;
 	pthread_mutex_t		stop_mutex;
 	int					stop;
+	int					done;
 	int					nb_coders;
 	long				time_to_burnout;
 	long				time_to_compile;
@@ -65,6 +66,7 @@ struct s_sim {
 long	get_time_ms(void);
 void	log_state(t_sim *sim, int id, char *state);
 int		should_stop(t_sim *sim);
+int		should_done(t_sim *sim);
 
 // parser
 int		parse_args(t_sim *sim, int argc, char **argv);
@@ -80,9 +82,5 @@ void	*coder_routine(void *arg);
 
 // monitor thread
 void	*monitor_routine(void *arg);
-
-// debug log
-void	print_debug_header(t_sim *sim);
-void	debug_log(t_sim *sim, int coder_id, char *event, char *status);
 
 #endif
