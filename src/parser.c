@@ -1,8 +1,8 @@
 #include "codexion.h"
 
-static int is_valid_int(char *str)
+static int	is_valid_int(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!str || !str[0])
@@ -16,7 +16,7 @@ static int is_valid_int(char *str)
 	return (1);
 }
 
-int parse_args(t_sim *sim, int argc, char **argv)
+int	parse_args(t_sim *sim, int argc, char **argv)
 {
 	if (argc != 9)
 		return (0);
@@ -34,7 +34,10 @@ int parse_args(t_sim *sim, int argc, char **argv)
 	sim->time_to_refactor = atoi(argv[5]);
 	sim->nb_compiles_required = atoi(argv[6]);
 	sim->dongle_cooldown = atoi(argv[7]);
-	sim->scheduler = (strcmp(argv[8], "edf") == 0) ? 1 : 0;
+	if (strcmp(argv[8], "edf") == 0)
+		sim->scheduler = 1;
+	else
+		sim->scheduler = 0;
 	if (sim->nb_coders < 1)
 		return (0);
 	return (1);

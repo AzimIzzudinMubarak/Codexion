@@ -7,6 +7,7 @@ IFLAGS	= -I include
 SRCDIR	= src
 SRCS	= $(SRCDIR)/main.c \
 			$(SRCDIR)/cleanup.c \
+			$(SRCDIR)/dongle.c \
 			$(SRCDIR)/init.c \
 			$(SRCDIR)/monitor.c \
 			$(SRCDIR)/parser.c \

@@ -1,8 +1,8 @@
 #include "codexion.h"
 
-void launch_coders(t_sim *sim)
+static void	launch_coders(t_sim *sim)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < sim->nb_coders)
@@ -13,9 +13,9 @@ void launch_coders(t_sim *sim)
 	}
 }
 
-void join_coders(t_sim *sim)
+static void	join_coders(t_sim *sim)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < sim->nb_coders)
@@ -25,11 +25,11 @@ void join_coders(t_sim *sim)
 	}
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-	t_sim sim;
+	t_sim	sim;
 
-	if(!init_sim(&sim, argc, argv))
+	if (!init_sim(&sim, argc, argv))
 	{
 		write(2, "Error: invalid arguments\n", 25);
 		return (1);

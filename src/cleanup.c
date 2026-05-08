@@ -1,8 +1,8 @@
 #include "codexion.h"
 
-static void cleanup_dongles(t_sim *sim, int count)
+static void	cleanup_dongles(t_sim *sim, int count)
 {
-	int i;
+	int	i;
 
 	if (!sim->dongles)
 		return ;
@@ -19,7 +19,7 @@ static void cleanup_dongles(t_sim *sim, int count)
 	sim->dongles = NULL;
 }
 
-void cleanup_sim(t_sim *sim)
+void	cleanup_sim(t_sim *sim)
 {
 	if (sim->dongles)
 		cleanup_dongles(sim, sim->nb_coders);

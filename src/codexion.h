@@ -10,54 +10,56 @@
 
 /* --- Structures --- */
 
-typedef struct s_heap_node {
-	int					coder_id;
-	long				priority;
-} t_heap_node;
+typedef struct s_heap_node
+{
+	int		coder_id;
+	long	priority;
+}	t_heap_node;
 
+typedef struct s_dongle
+{
+	int				id;
+	pthread_mutex_t	mutex;
+	pthread_cond_t	cond;
+	int				in_use;
+	int				owner_id;
+	long			cooldown_until;
+	t_heap_node		*queue;
+	int				queue_size;
+	long			arrival_counter;
+}	t_dongle;
 
-typedef struct s_dongle {
-	int					id;
-	pthread_mutex_t		mutex;
-	pthread_cond_t		cond;
-	int					in_use;
-	int					owner_id;
-	long				cooldown_until;
-	t_heap_node			*queue;
-	int					queue_size;
-	long				arrival_counter;
-} t_dongle;
+typedef struct s_sim	t_sim;
 
-typedef struct s_sim t_sim;
+typedef struct s_coder
+{
+	int				id;
+	pthread_t		thread;
+	struct s_sim	*sim;
+	long			last_compile;
+	int				compile_count;
+	t_dongle		*first;
+	t_dongle		*second;
+	int				burned_out;
+}	t_coder;
 
-typedef struct s_coder {
-	int					id;
-	pthread_t			thread;
-	struct s_sim		*sim;
-	long				last_compile;
-	int					compile_count;
-	t_dongle			*first;
-	t_dongle			*second;
-	int					burned_out;
-} t_coder;
-
-struct s_sim {
-	t_coder				*coders;
-	t_dongle			*dongles;
-	pthread_t			monitor;
-	pthread_mutex_t		log_mutex;
-	pthread_mutex_t		stop_mutex;
-	int					stop;
-	int					done;
-	int					nb_coders;
-	long				time_to_burnout;
-	long				time_to_compile;
-	long				time_to_debug;
-	long				time_to_refactor;
-	int					nb_compiles_required;
-	long				dongle_cooldown;
-	int					scheduler;
-	long				start_time;
+struct s_sim
+{
+	t_coder			*coders;
+	t_dongle		*dongles;
+	pthread_t		monitor;
+	pthread_mutex_t	log_mutex;
+	pthread_mutex_t	stop_mutex;
+	int				stop;
+	int				nb_coders;
+	long			time_to_burnout;
+	long			time_to_compile;
+	long			time_to_debug;
+	long			time_to_refactor;
+	int				nb_compiles_required;
+	long			dongle_cooldown;
+	int				scheduler;
+	long			start_time;
 };
 
 /* --- Functions --- */
@@ -66,7 +68,6 @@ struct s_sim {
 long	get_time_ms(void);
 void	log_state(t_sim *sim, int id, char *state);
 int		should_stop(t_sim *sim);
-int		should_done(t_sim *sim);
 
 // parser
 int		parse_args(t_sim *sim, int argc, char **argv);
@@ -78,7 +79,12 @@ int		init_sim(t_sim *sim, int argc, char **argv);
 void	cleanup_sim(t_sim *sim);
 
 // coder thread
+long	get_priority(t_coder *coder, t_dongle *dongle);
 void	*coder_routine(void *arg);
+
+// dongle
+void	grab_dongle(t_coder *coder, t_dongle *dongle);
+void	release_dongle(t_coder *coder, t_dongle *dongle);
 
 // monitor thread
 void	*monitor_routine(void *arg);
