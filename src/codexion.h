@@ -79,10 +79,12 @@ int		init_sim(t_sim *sim, int argc, char **argv);
 void	cleanup_sim(t_sim *sim);
 
 // coder thread
-long	get_priority(t_coder *coder, t_dongle *dongle);
 void	*coder_routine(void *arg);
 
 // dongle
+int		get_smallest(t_dongle *dongle, int i);
+void	push_to_queue(t_coder *coder, t_dongle *dongle, long priority);
+void	pop_from_queue(t_dongle *dongle);
 void	grab_dongle(t_coder *coder, t_dongle *dongle);
 void	release_dongle(t_coder *coder, t_dongle *dongle);
 

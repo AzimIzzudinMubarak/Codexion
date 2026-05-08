@@ -1,46 +1,6 @@
 #include "codexion.h"
 
-static void	push_to_queue(t_coder *coder, t_dongle *dongle)
-{
-	int			i;
-	int			parent;
-	t_heap_node	tmp;
-
-	i = dongle->queue_size;
-	dongle->queue[i].coder_id = coder->id;
-	dongle->queue[i].priority = get_priority(coder, dongle);
-	dongle->queue_size++;
-	while (i > 0)
-	{
-		parent = (i - 1) / 2;
-		if (dongle->queue[parent].priority <= dongle->queue[i].priority)
-			break ;
-		tmp = dongle->queue[parent];
-		dongle->queue[parent] = dongle->queue[i];
-		dongle->queue[i] = tmp;
-		i = parent;
-	}
-}
-
-static int	get_smallest(t_dongle *dongle, int i)
-{
-	int		smallest;
-	int		left;
-	int		right;
-
-	left = 2 * i + 1;
-	right = 2 * i + 2;
-	smallest = i;
-	if (left < dongle->queue_size
-		&& dongle->queue[left].priority < dongle->queue[smallest].priority)
-		smallest = left;
-	if (right < dongle->queue_size
-		&& dongle->queue[right].priority < dongle->queue[smallest].priority)
-		smallest = right;
-	return (smallest);
-}
-
-static void	pop_from_queue(t_dongle *dongle)
+void	pop_from_queue(t_dongle *dongle)
 {
 	int			i;
 	int			smallest;
@@ -63,13 +23,20 @@ static void	pop_from_queue(t_dongle *dongle)
 	}
 }
 
+static long	get_priority(t_coder *coder, t_dongle *dongle)
+{
+	if (coder->sim->scheduler == 0)
+		return (dongle->arrival_counter++);
+	return (coder->last_compile + coder->sim->time_to_burnout);
+}
+
 void	grab_dongle(t_coder *coder, t_dongle *dongle)
 {
 	struct timespec	ts;
 	long			target;
 
 	pthread_mutex_lock(&dongle->mutex);
-	push_to_queue(coder, dongle);
+	push_to_queue(coder, dongle, get_priority(coder, dongle));
 	while (dongle->in_use
 		|| dongle->queue[0].coder_id != coder->id
 		|| get_time_ms() < dongle->cooldown_until)
