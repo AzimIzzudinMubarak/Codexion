@@ -138,19 +138,15 @@ This check-and-wait loop ensures no coder can observe a stale state or skip past
 
 ### References
 
-- [POSIX Threads Programming — Lawrence Livermore National Laboratory](https://hpc-tutorials.llnl.gov/posix/)
-- [The Little Book of Semaphores — Allen Downey](https://greenteapress.com/wp/semaphores/)
 - [Dining Philosophers Problem — Wikipedia](https://en.wikipedia.org/wiki/Dining_philosophers_problem)
 - [Earliest Deadline First scheduling — Wikipedia](https://en.wikipedia.org/wiki/Earliest_deadline_first_scheduling)
 - `man pthread_cond_timedwait`, `man gettimeofday`, `man pthread_mutex_init`
 
 ### AI usage
 
-AI (Claude, Anthropic) was used during this project for the following tasks:
+AI was used during this project for the following tasks:
 
-- Reviewing the overall structure and correctness of the thread synchronization logic.
+- Reviewing the overall structure
 - Identifying potential data races (e.g., reading `stop` without `stop_mutex` inside `log_state`, and reads of `last_compile` in EDF priority calculation without a mutex).
-- Discussing trade-offs between FIFO and EDF scheduling fairness under various parameter combinations.
+- Discussing the difference between FIFO and EDF scheduling fairness under various parameter combinations.
 - Proofreading and structuring this README.
-
-All generated suggestions were reviewed, understood, and validated before being applied to the codebase.
